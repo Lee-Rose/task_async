@@ -8,7 +8,8 @@ from sqlalchemy.orm import sessionmaker
 
 import config
 
-CHUNK_SIZE = 1000
+
+CHUNK_SIZE = 2
 engine = create_async_engine(config.PG_DSN_ALC, echo=True)
 Base = declarative_base()
 
@@ -46,7 +47,7 @@ async def main():
     async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     async with aiohttp.ClientSession() as web_session:
-        for chunk_id in chunked(range(1,21), CHUNK_SIZE):
+        for chunk_id in chunked(range(1,17), CHUNK_SIZE):
             coros =[get_people(web_session, i) for i in chunk_id]
             result = await asyncio.gather(*coros)
             people_list = [People(id=item.get("id", None),
